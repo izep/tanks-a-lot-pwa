@@ -522,6 +522,11 @@ export class Game {
       explosion.image(color);
       if (this.stage) {
         this.stage.append(explosion);
+        
+        // Remove explosion after a short delay
+        setTimeout(() => {
+          explosion.remove();
+        }, 200 + index * 100);
       }
     });
   }

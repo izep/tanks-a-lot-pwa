@@ -7,6 +7,7 @@ import Stage from 'stage-js';
 export class MainMenu {
   private stage: Stage;
   private onStartGame: () => void;
+  private keyHandler: ((e: KeyboardEvent) => void) | null = null;
 
   constructor(stage: Stage, onStartGame: () => void) {
     this.stage = stage;
@@ -53,20 +54,31 @@ export class MainMenu {
     this.stage.append(instructionsSprite);
 
     // Handle space key to start game
-    const handleKeyPress = (e: KeyboardEvent): void => {
+    this.keyHandler = (e: KeyboardEvent): void => {
       if (e.key === ' ' || e.key === 'Enter') {
-        window.removeEventListener('keydown', handleKeyPress);
+        this.cleanup();
         this.onStartGame();
       }
     };
 
-    window.addEventListener('keydown', handleKeyPress);
+    window.addEventListener('keydown', this.keyHandler);
   }
 
   /**
    * Hide the main menu
    */
   hide(): void {
+    this.cleanup();
     this.stage.empty();
+  }
+
+  /**
+   * Cleanup event listeners
+   */
+  private cleanup(): void {
+    if (this.keyHandler) {
+      window.removeEventListener('keydown', this.keyHandler);
+      this.keyHandler = null;
+    }
   }
 }
