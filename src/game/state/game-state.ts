@@ -10,6 +10,7 @@ import {
   TankState,
   WeaponType,
   Inventory,
+  ProjectileState,
 } from '@/types/game';
 import { Tank } from '@/game/entities/tank';
 import { Terrain } from '@/game/entities/terrain';
@@ -231,6 +232,20 @@ export class GameStateManager {
     if (victim) {
       victim.deaths++;
     }
+  }
+
+  /**
+   * Add projectile to game state
+   */
+  addProjectile(projectile: ProjectileState): void {
+    this.state.projectiles.push(projectile);
+  }
+
+  /**
+   * Update projectiles in game state
+   */
+  updateProjectiles(projectiles: ProjectileState[]): void {
+    this.state.projectiles = projectiles;
   }
 
   /**

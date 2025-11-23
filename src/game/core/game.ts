@@ -126,7 +126,7 @@ export class Game {
     if (!terrain) return;
 
     // Update projectiles
-    state.projectiles = state.projectiles
+    const updatedProjectiles = state.projectiles
       .map((projectile) => {
         if (!projectile.active) return projectile;
 
@@ -157,8 +157,8 @@ export class Game {
       })
       .filter((p) => p.active);
 
-    // Update state (would need to properly update the state through GameStateManager)
-    // For now, this is simplified
+    // Update projectiles through proper state management
+    this.gameState.updateProjectiles(updatedProjectiles);
   }
 
   /**
@@ -254,7 +254,7 @@ export class Game {
   }
 
   /**
-   * Render terrain
+   * Render terrain using efficient batched rendering
    */
   private renderTerrain(terrain: ReturnType<typeof GameStateManager.prototype.getTerrain>): void {
     if (!this.stage || !terrain) return;
@@ -262,26 +262,42 @@ export class Game {
     const { width, height } = terrain.getDimensions();
     const bitmap = terrain.getBitmap();
 
-    // Create terrain sprite (simplified - would use proper texture in production)
-    const terrainLayer = Stage.create();
+    // Create a canvas texture for efficient rendering
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext('2d');
     
+    if (!ctx) return;
+
+    // Draw terrain pixels to canvas
+    const imageData = ctx.createImageData(width, height);
+    const data = imageData.data;
+
     for (let y = 0; y < height; y++) {
       for (let x = 0; x < width; x++) {
-        if (bitmap[y * width + x] === 1) {
-          // Draw a small rectangle for each terrain pixel
-          const pixel = Stage.create().pin({
-            x,
-            y,
-            width: 1,
-            height: 1,
-          });
-          pixel.image('#8B4513'); // Brown color for terrain
-          terrainLayer.append(pixel);
+        const index = y * width + x;
+        if (bitmap[index] === 1) {
+          const pixelIndex = (y * width + x) * 4;
+          // Brown terrain color
+          data[pixelIndex] = 139;     // R
+          data[pixelIndex + 1] = 69;  // G
+          data[pixelIndex + 2] = 19;  // B
+          data[pixelIndex + 3] = 255; // A
         }
       }
     }
 
-    this.stage.append(terrainLayer);
+    ctx.putImageData(imageData, 0, 0);
+
+    // Create a single Stage.js sprite from the canvas
+    const terrainSprite = Stage.create().pin({
+      x: 0,
+      y: 0,
+    });
+    
+    terrainSprite.image(canvas);
+    this.stage.append(terrainSprite);
   }
 
   /**
@@ -373,9 +389,8 @@ export class Game {
       currentPlayer.config.id
     );
 
-    // Add to state (would need proper state management)
-    const state = this.gameState.getState();
-    state.projectiles.push(projectile);
+    // Add to state through proper method
+    this.gameState.addProjectile(projectile);
   }
 
   /**
