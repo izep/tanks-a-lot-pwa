@@ -3,7 +3,7 @@
  */
 
 import Stage from 'stage-js';
-import { GameConfig, PlayerConfig, PlayerType, WeaponType } from '@/types/game';
+import { GameConfig, PlayerConfig, PlayerType, WeaponType, AIDifficulty } from '@/types/game';
 import { GameStateManager } from '@/game/state/game-state';
 import { createProjectile, updateProjectile } from '@/game/physics/ballistics';
 import { checkCollisions, calculateDamage } from '@/game/physics/collision';
@@ -12,6 +12,7 @@ import { InputManager, InputAction } from './input';
 import { MainMenu } from '@/ui/screens/main-menu';
 import { GameHUD } from '@/ui/hud/game-hud';
 import { GameOver } from '@/ui/screens/game-over';
+import { AIController } from '@/game/ai/ai-controller';
 
 enum GamePhase {
   Menu = 'menu',
@@ -33,6 +34,8 @@ export class Game {
   private gameOver: GameOver | null = null;
   private currentPhase: GamePhase = GamePhase.Menu;
   private projectilesActive = false;
+  private aiControllers: Map<string, AIController> = new Map();
+  private aiTurnInProgress = false;
 
   constructor(container: HTMLElement) {
     this.container = container;
@@ -137,6 +140,15 @@ export class Game {
     if (this.stage) {
       this.gameHUD = new GameHUD(this.stage);
     }
+
+    // If first player is AI, start their turn
+    if (this.gameState) {
+      const currentPlayer = this.gameState.getCurrentPlayer();
+      if (currentPlayer.config.type === PlayerType.AI) {
+        // Small delay before AI starts
+        setTimeout(() => this.executeAITurn(), 1000);
+      }
+    }
   }
 
   /**
@@ -166,7 +178,7 @@ export class Game {
       terrainHeight: 0.6,
     };
 
-    // Create default players
+    // Create players (1 human, 1 AI)
     const players: PlayerConfig[] = [
       {
         id: 'player1',
@@ -175,9 +187,10 @@ export class Game {
         color: { r: 255, g: 0, b: 0 },
       },
       {
-        id: 'player2',
-        name: 'Player 2',
-        type: PlayerType.Human,
+        id: 'ai1',
+        name: 'Computer',
+        type: PlayerType.AI,
+        aiDifficulty: AIDifficulty.Shooter,
         color: { r: 0, g: 0, b: 255 },
       },
     ];
@@ -185,6 +198,14 @@ export class Game {
     this.gameState = new GameStateManager(config, players);
     this.gameState.initializeRound(800, 600);
     this.projectilesActive = false;
+
+    // Set up AI controllers
+    this.aiControllers.clear();
+    players.forEach((player) => {
+      if (player.type === PlayerType.AI && player.aiDifficulty) {
+        this.aiControllers.set(player.id, new AIController(player.aiDifficulty));
+      }
+    });
   }
 
   /**
@@ -337,6 +358,52 @@ export class Game {
 
     this.projectilesActive = false;
     this.gameState.nextTurn();
+
+    // Check if next player is AI
+    const currentPlayer = this.gameState.getCurrentPlayer();
+    if (currentPlayer.config.type === PlayerType.AI && !this.aiTurnInProgress) {
+      this.executeAITurn();
+    }
+  }
+
+  /**
+   * Execute AI player's turn
+   */
+  private async executeAITurn(): Promise<void> {
+    if (!this.gameState || this.aiTurnInProgress) return;
+
+    const currentPlayer = this.gameState.getCurrentPlayer();
+    const aiController = this.aiControllers.get(currentPlayer.config.id);
+
+    if (!aiController) return;
+
+    this.aiTurnInProgress = true;
+
+    try {
+      await aiController.executeTurn(
+        this.gameState,
+        currentPlayer.config.id,
+        (angle, power, weapon) => {
+          if (!this.gameState) return;
+
+          const tank = this.gameState.getTank(currentPlayer.config.id);
+          if (tank) {
+            tank.setAngle(angle);
+            tank.setPower(power);
+          }
+
+          // Consume ammo
+          if (currentPlayer.inventory[weapon] > 0) {
+            currentPlayer.inventory[weapon]--;
+          }
+
+          this.fire(weapon);
+          this.projectilesActive = true;
+        }
+      );
+    } finally {
+      this.aiTurnInProgress = false;
+    }
   }
 
   /**
