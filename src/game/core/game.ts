@@ -78,6 +78,42 @@ export class Game {
     this.inputManager.on(InputAction.Fire, () => this.handleFire());
     this.inputManager.on(InputAction.MoveLeft, () => this.handleMove(-1));
     this.inputManager.on(InputAction.MoveRight, () => this.handleMove(1));
+    this.inputManager.on(InputAction.NextWeapon, () => this.cycleWeapon(1));
+    this.inputManager.on(InputAction.PrevWeapon, () => this.cycleWeapon(-1));
+  }
+
+  /**
+   * Cycle through available weapons
+   */
+  private cycleWeapon(direction: number): void {
+    if (!this.gameState || this.currentPhase !== GamePhase.Playing || this.projectilesActive) return;
+
+    const currentPlayer = this.gameState.getCurrentPlayer();
+    const availableWeapons = Object.keys(currentPlayer.inventory).filter(
+      weaponType => currentPlayer.inventory[weaponType] > 0
+    ) as WeaponType[];
+
+    if (availableWeapons.length === 0) return;
+
+    // Store current weapon in player state (we'll add this to player state)
+    const currentWeapon = this.getCurrentWeapon();
+    const currentIndex = availableWeapons.indexOf(currentWeapon);
+    
+    let newIndex = currentIndex + direction;
+    if (newIndex < 0) newIndex = availableWeapons.length - 1;
+    if (newIndex >= availableWeapons.length) newIndex = 0;
+
+    this.setCurrentWeapon(availableWeapons[newIndex]);
+  }
+
+  private currentWeapon: WeaponType = WeaponType.BabyMissile;
+
+  private getCurrentWeapon(): WeaponType {
+    return this.currentWeapon;
+  }
+
+  private setCurrentWeapon(weapon: WeaponType): void {
+    this.currentWeapon = weapon;
   }
 
   /**
@@ -188,8 +224,19 @@ export class Game {
     const state = this.gameState.getState();
     if (state.projectiles.length > 0) return; // Already firing
 
-    // Fire with baby missile
-    this.fire(WeaponType.BabyMissile);
+    const currentPlayer = this.gameState.getCurrentPlayer();
+    const weapon = this.getCurrentWeapon();
+
+    // Check if player has this weapon
+    if (!currentPlayer.inventory[weapon] || currentPlayer.inventory[weapon] <= 0) {
+      return; // No ammo
+    }
+
+    // Consume ammo
+    currentPlayer.inventory[weapon]--;
+
+    // Fire with selected weapon
+    this.fire(weapon);
     this.projectilesActive = true;
   }
 
@@ -340,6 +387,9 @@ export class Game {
     const weaponConfig = getWeaponConfig(weaponType);
     const state = this.gameState.getState();
 
+    // Visual explosion effect
+    this.renderExplosion(position, weaponConfig.blastRadius);
+
     // Destroy terrain
     terrain.explode(position, weaponConfig.blastRadius);
 
@@ -365,7 +415,7 @@ export class Game {
         if (ownerId !== player.config.id) {
           const damageDealer = state.players.find((p) => p.config.id === ownerId);
           if (damageDealer) {
-            damageDealer.money += damage;
+            damageDealer.money += damage * 10; // 10x multiplier for money
             damageDealer.score += damage;
           }
         }
@@ -378,6 +428,34 @@ export class Game {
 
       // Update tank position (check for falling)
       tank.updatePosition(terrain);
+    });
+  }
+
+  /**
+   * Render explosion visual effect
+   */
+  private renderExplosion(position: { x: number; y: number }, radius: number): void {
+    if (!this.stage) return;
+
+    // Create explosion circles with fading effect
+    const colors = ['#FFFF00', '#FF8800', '#FF0000'];
+    
+    colors.forEach((color, index) => {
+      const explosionRadius = radius * (1 - index * 0.3);
+      const explosion = Stage.create().pin({
+        x: position.x,
+        y: position.y,
+        width: explosionRadius * 2,
+        height: explosionRadius * 2,
+        align: 0.5,
+        alpha: 0.7 - index * 0.2,
+      });
+      
+      // Create a simple circle by using a rounded square
+      explosion.image(color);
+      if (this.stage) {
+        this.stage.append(explosion);
+      }
     });
   }
 
@@ -414,7 +492,7 @@ export class Game {
 
     // Render HUD
     if (this.gameHUD) {
-      this.gameHUD.update(state);
+      this.gameHUD.update(state, this.getCurrentWeapon());
     }
   }
 
@@ -466,22 +544,70 @@ export class Game {
   }
 
   /**
-   * Render tank
+   * Render tank with barrel
    */
   private renderTank(tank: ReturnType<typeof GameStateManager.prototype.getCurrentPlayer>['tank']): void {
-    if (!this.stage) return;
+    if (!this.stage || !this.gameState) return;
 
-    const tankSprite = Stage.create().pin({
+    const state = this.gameState.getState();
+    const player = state.players.find(p => p.tank.id === tank.id);
+    if (!player) return;
+
+    // Get color
+    const color = `rgb(${player.config.color.r}, ${player.config.color.g}, ${player.config.color.b})`;
+
+    // Tank body
+    const tankBody = Stage.create().pin({
       x: tank.position.x,
       y: tank.position.y,
       width: 20,
       height: 10,
       align: 0.5,
     });
+    tankBody.image(color);
     
-    tankSprite.image('#FF0000'); // Red color placeholder
+    // Tank barrel
+    const angleRad = (tank.angle * Math.PI) / 180;
+    const barrelLength = 15;
     
-    this.stage.append(tankSprite);
+    // Create barrel using a thin rectangle
+    const barrel = Stage.create().pin({
+      x: tank.position.x,
+      y: tank.position.y,
+      width: barrelLength,
+      height: 3,
+      align: 0,
+      alignY: 0.5,
+      rotation: -angleRad, // Negative because Stage.js rotation is opposite
+    });
+    barrel.image(color);
+    
+    // Health bar above tank
+    const healthBarWidth = 20;
+    const healthPercent = tank.health / tank.maxHealth;
+    const healthBarFill = healthBarWidth * healthPercent;
+    
+    const healthBarBg = Stage.create().pin({
+      x: tank.position.x - healthBarWidth / 2,
+      y: tank.position.y - 20,
+      width: healthBarWidth,
+      height: 3,
+    });
+    healthBarBg.image('#333333');
+    
+    const healthBarColor = healthPercent > 0.5 ? '#00FF00' : healthPercent > 0.25 ? '#FFFF00' : '#FF0000';
+    const healthBar = Stage.create().pin({
+      x: tank.position.x - healthBarWidth / 2,
+      y: tank.position.y - 20,
+      width: healthBarFill,
+      height: 3,
+    });
+    healthBar.image(healthBarColor);
+    
+    this.stage.append(tankBody);
+    this.stage.append(barrel);
+    this.stage.append(healthBarBg);
+    this.stage.append(healthBar);
   }
 
   /**

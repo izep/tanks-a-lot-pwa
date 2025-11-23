@@ -44,8 +44,12 @@ export class GameStateManager {
    */
   private createPlayerState(config: PlayerConfig): PlayerState {
     const inventory: Inventory = {
-      [WeaponType.BabyMissile]: 10,
-      [WeaponType.Missile]: 5,
+      [WeaponType.BabyMissile]: 20,
+      [WeaponType.Missile]: 10,
+      [WeaponType.BabyNuke]: 3,
+      [WeaponType.Nuke]: 1,
+      [WeaponType.BabyRoller]: 5,
+      [WeaponType.Tracer]: 10,
     };
 
     return {
