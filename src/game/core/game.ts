@@ -8,6 +8,16 @@ import { GameStateManager } from '@/game/state/game-state';
 import { createProjectile, updateProjectile } from '@/game/physics/ballistics';
 import { checkCollisions, calculateDamage } from '@/game/physics/collision';
 import { getWeaponConfig } from '@/game/weapons/weapon-config';
+import { InputManager, InputAction } from './input';
+import { MainMenu } from '@/ui/screens/main-menu';
+import { GameHUD } from '@/ui/hud/game-hud';
+import { GameOver } from '@/ui/screens/game-over';
+
+enum GamePhase {
+  Menu = 'menu',
+  Playing = 'playing',
+  GameOver = 'gameover',
+}
 
 export class Game {
   private stage: Stage | null = null;
@@ -17,6 +27,12 @@ export class Game {
   private lastTime = 0;
   private readonly targetFPS = 60;
   private readonly deltaTime = 1000 / this.targetFPS;
+  private inputManager: InputManager | null = null;
+  private mainMenu: MainMenu | null = null;
+  private gameHUD: GameHUD | null = null;
+  private gameOver: GameOver | null = null;
+  private currentPhase: GamePhase = GamePhase.Menu;
+  private projectilesActive = false;
 
   constructor(container: HTMLElement) {
     this.container = container;
@@ -27,7 +43,8 @@ export class Game {
    */
   start(): void {
     this.setupStage();
-    this.initializeGame();
+    this.setupInput();
+    this.showMainMenu();
     this.startGameLoop();
   }
 
@@ -48,12 +65,51 @@ export class Game {
   }
 
   /**
+   * Setup input handling
+   */
+  private setupInput(): void {
+    this.inputManager = new InputManager();
+
+    // Bind input actions
+    this.inputManager.on(InputAction.AngleIncrease, () => this.adjustAngle(1));
+    this.inputManager.on(InputAction.AngleDecrease, () => this.adjustAngle(-1));
+    this.inputManager.on(InputAction.PowerIncrease, () => this.adjustPower(1));
+    this.inputManager.on(InputAction.PowerDecrease, () => this.adjustPower(-1));
+    this.inputManager.on(InputAction.Fire, () => this.handleFire());
+    this.inputManager.on(InputAction.MoveLeft, () => this.handleMove(-1));
+    this.inputManager.on(InputAction.MoveRight, () => this.handleMove(1));
+  }
+
+  /**
+   * Show main menu
+   */
+  private showMainMenu(): void {
+    if (!this.stage) return;
+
+    this.currentPhase = GamePhase.Menu;
+    this.mainMenu = new MainMenu(this.stage, () => this.startNewGame());
+    this.mainMenu.show();
+  }
+
+  /**
+   * Start a new game
+   */
+  private startNewGame(): void {
+    this.initializeGame();
+    this.currentPhase = GamePhase.Playing;
+    
+    if (this.stage) {
+      this.gameHUD = new GameHUD(this.stage);
+    }
+  }
+
+  /**
    * Initialize game state
    */
   private initializeGame(): void {
     // Create default game configuration
     const config: GameConfig = {
-      rounds: 10,
+      rounds: 3,
       playerCount: 2,
       physics: {
         gravity: 0.5,
@@ -65,7 +121,7 @@ export class Game {
         projectileSpeed: 1,
       },
       economics: {
-        startingMoney: 5000,
+        startingMoney: 10000,
         interestRate: 0.1,
         marketVolatility: 0.2,
       },
@@ -92,8 +148,64 @@ export class Game {
 
     this.gameState = new GameStateManager(config, players);
     this.gameState.initializeRound(800, 600);
+    this.projectilesActive = false;
+  }
 
-    this.render();
+  /**
+   * Adjust firing angle
+   */
+  private adjustAngle(delta: number): void {
+    if (!this.gameState || this.currentPhase !== GamePhase.Playing || this.projectilesActive) return;
+
+    const currentPlayer = this.gameState.getCurrentPlayer();
+    const tank = this.gameState.getTank(currentPlayer.config.id);
+    if (tank) {
+      const currentAngle = tank.getState().angle;
+      tank.setAngle(currentAngle + delta);
+    }
+  }
+
+  /**
+   * Adjust firing power
+   */
+  private adjustPower(delta: number): void {
+    if (!this.gameState || this.currentPhase !== GamePhase.Playing || this.projectilesActive) return;
+
+    const currentPlayer = this.gameState.getCurrentPlayer();
+    const tank = this.gameState.getTank(currentPlayer.config.id);
+    if (tank) {
+      const currentPower = tank.getState().power;
+      tank.setPower(currentPower + delta);
+    }
+  }
+
+  /**
+   * Handle firing
+   */
+  private handleFire(): void {
+    if (!this.gameState || this.currentPhase !== GamePhase.Playing || this.projectilesActive) return;
+
+    const state = this.gameState.getState();
+    if (state.projectiles.length > 0) return; // Already firing
+
+    // Fire with baby missile
+    this.fire(WeaponType.BabyMissile);
+    this.projectilesActive = true;
+  }
+
+  /**
+   * Handle tank movement
+   */
+  private handleMove(direction: -1 | 1): void {
+    if (!this.gameState || this.currentPhase !== GamePhase.Playing || this.projectilesActive) return;
+
+    const currentPlayer = this.gameState.getCurrentPlayer();
+    const tank = this.gameState.getTank(currentPlayer.config.id);
+    const terrain = this.gameState.getTerrain();
+
+    if (tank && terrain) {
+      tank.move(direction, 5, terrain);
+    }
   }
 
   /**
@@ -105,8 +217,12 @@ export class Game {
 
       if (elapsed >= this.deltaTime) {
         this.lastTime = currentTime - (elapsed % this.deltaTime);
-        this.update(this.deltaTime / 1000); // Convert to seconds
-        this.render();
+        
+        if (this.currentPhase === GamePhase.Playing) {
+          this.update(this.deltaTime / 1000); // Convert to seconds
+          this.render();
+          this.checkGameOver();
+        }
       }
 
       this.animationFrameId = requestAnimationFrame(loop);
@@ -159,6 +275,53 @@ export class Game {
 
     // Update projectiles through proper state management
     this.gameState.updateProjectiles(updatedProjectiles);
+
+    // If all projectiles are done, end turn
+    if (this.projectilesActive && updatedProjectiles.length === 0) {
+      this.endTurn();
+    }
+  }
+
+  /**
+   * End current turn
+   */
+  private endTurn(): void {
+    if (!this.gameState) return;
+
+    this.projectilesActive = false;
+    this.gameState.nextTurn();
+  }
+
+  /**
+   * Check if game is over
+   */
+  private checkGameOver(): void {
+    if (!this.gameState) return;
+
+    if (this.gameState.isGameOver()) {
+      this.showGameOver();
+    }
+  }
+
+  /**
+   * Show game over screen
+   */
+  private showGameOver(): void {
+    if (!this.stage || !this.gameState) return;
+
+    const state = this.gameState.getState();
+    this.currentPhase = GamePhase.GameOver;
+
+    // Find winner
+    let winner = state.players[0];
+    for (const player of state.players) {
+      if (player.score > winner.score) {
+        winner = player;
+      }
+    }
+
+    this.gameOver = new GameOver(this.stage, () => this.showMainMenu());
+    this.gameOver.show(winner.config.name, winner.score);
   }
 
   /**
@@ -222,7 +385,7 @@ export class Game {
    * Render current game state
    */
   private render(): void {
-    if (!this.stage || !this.gameState) return;
+    if (!this.stage || !this.gameState || this.currentPhase !== GamePhase.Playing) return;
 
     // Clear stage
     this.stage.empty();
@@ -250,7 +413,9 @@ export class Game {
     });
 
     // Render HUD
-    this.renderHUD(state);
+    if (this.gameHUD) {
+      this.gameHUD.update(state);
+    }
   }
 
   /**
@@ -340,32 +505,6 @@ export class Game {
   }
 
   /**
-   * Render HUD
-   */
-  private renderHUD(state: ReturnType<typeof GameStateManager.prototype.getState>): void {
-    if (!this.stage) return;
-
-    const currentPlayer = state.players[state.currentPlayerIndex];
-
-    // Display current player info
-    const hudText = Stage.string(
-      `Player: ${currentPlayer.config.name} | ` +
-      `Health: ${currentPlayer.tank.health} | ` +
-      `Money: $${currentPlayer.money} | ` +
-      `Wind: ${state.wind.toFixed(1)}`
-    );
-
-    const hud = Stage.create().pin({
-      x: 10,
-      y: 10,
-    });
-    
-    hud.image(hudText);
-    
-    this.stage.append(hud);
-  }
-
-  /**
    * Fire weapon
    */
   fire(weaponType: WeaponType): void {
@@ -400,6 +539,10 @@ export class Game {
     if (this.animationFrameId !== null) {
       cancelAnimationFrame(this.animationFrameId);
       this.animationFrameId = null;
+    }
+    
+    if (this.inputManager) {
+      this.inputManager.destroy();
     }
   }
 }
