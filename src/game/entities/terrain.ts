@@ -41,7 +41,7 @@ export class Terrain {
       const range = (heights[end] - heights[start]) * roughness;
 
       const midValue = (heights[start] + heights[end]) / 2 + random(-range, range);
-      heights[mid] = clamp(midValue as number, 0, 1);
+      heights[mid] = clamp(midValue, 0, 1);
 
       displace(start, mid, roughness * 0.5);
       displace(mid, end, roughness * 0.5);
@@ -49,7 +49,7 @@ export class Terrain {
 
     displace(0, width - 1, roughness);
 
-    return heights as number[];
+    return heights;
   }
 
   /**

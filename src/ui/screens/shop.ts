@@ -3,19 +3,22 @@
  */
 
 import Stage from 'stage-js';
-import { GameState } from '@/types/game';
+import { GameState, WeaponConfig, PlayerState } from '@/types/game';
 import { getAllWeapons } from '@/game/weapons/weapon-config';
+
+// Type alias for Stage node
+type StageNode = ReturnType<typeof Stage.create>;
 
 export class ShopScreen {
   private stage: Stage;
-  private container: any;
+  private container: StageNode | null = null;
   private onClose: () => void;
   private currentPlayerIndex: number;
+  private gameState: GameState | null = null;
 
   constructor(stage: Stage, onClose: () => void) {
     this.stage = stage;
     this.onClose = onClose;
-    this.container = null;
     this.currentPlayerIndex = 0;
   }
 
@@ -23,6 +26,7 @@ export class ShopScreen {
    * Show shop screen for a specific player
    */
   show(gameState: GameState, playerIndex: number): void {
+    this.gameState = gameState;
     this.currentPlayerIndex = playerIndex;
     const player = gameState.players[playerIndex];
 
@@ -98,12 +102,14 @@ export class ShopScreen {
    * Create weapon item row
    */
   private createWeaponItem(
-    weaponConfig: any,
+    weaponConfig: WeaponConfig,
     index: number,
     startY: number,
     itemHeight: number,
-    player: any
+    player: PlayerState
   ): void {
+    if (!this.container) return;
+
     const y = startY + index * itemHeight;
     const canAfford = player.money >= weaponConfig.cost;
 
@@ -172,7 +178,10 @@ export class ShopScreen {
     if (canAfford) {
       const buyButton = this.createButton('Buy', 650, y + 10, () => {
         this.buyWeapon(player, weaponConfig);
-        this.show(this.getGameState(), this.currentPlayerIndex);
+        // Re-render shop with updated state
+        if (this.gameState) {
+          this.show(this.gameState, this.currentPlayerIndex);
+        }
       });
 
       this.container.append(buyButton);
@@ -182,7 +191,7 @@ export class ShopScreen {
   /**
    * Buy weapon for player
    */
-  private buyWeapon(player: any, weaponConfig: any): void {
+  private buyWeapon(player: PlayerState, weaponConfig: WeaponConfig): void {
     if (player.money >= weaponConfig.cost) {
       player.money -= weaponConfig.cost;
       const currentCount = player.inventory[weaponConfig.type] || 0;
@@ -201,7 +210,7 @@ export class ShopScreen {
     x: number,
     y: number,
     onClick: () => void
-  ): any {
+  ): StageNode {
     const button = Stage.create().pin({
       x: x,
       y: y,
@@ -252,15 +261,6 @@ export class ShopScreen {
     ctx.fillText(text, 0, 0);
 
     return canvas.toDataURL();
-  }
-
-  /**
-   * Get game state (stub - will be passed from caller)
-   */
-  private getGameState(): GameState {
-    // This is a temporary implementation
-    // In practice, the game state should be passed from the caller
-    return {} as GameState;
   }
 
   /**
