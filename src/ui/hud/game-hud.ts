@@ -3,7 +3,8 @@
  */
 
 import Stage from 'stage-js';
-import { GameState } from '@/types/game';
+import { GameState, WeaponType } from '@/types/game';
+import { getWeaponConfig } from '@/game/weapons/weapon-config';
 
 export class GameHUD {
   private stage: Stage;
@@ -16,7 +17,7 @@ export class GameHUD {
   /**
    * Update and render the HUD
    */
-  update(gameState: GameState): void {
+  update(gameState: GameState, currentWeapon?: WeaponType): void {
     // Remove old HUD
     if (this.hudLayer) {
       this.hudLayer.remove();
@@ -58,10 +59,20 @@ export class GameHUD {
     powerSprite.image(powerText);
     this.hudLayer.append(powerSprite);
 
+    // Current weapon
+    if (currentWeapon) {
+      const weaponConfig = getWeaponConfig(currentWeapon);
+      const ammo = currentPlayer.inventory[currentWeapon] || 0;
+      const weaponText = Stage.string(`Weapon: ${weaponConfig.name} (${ammo})`);
+      const weaponSprite = Stage.create().pin({ x: 10, y: 110 });
+      weaponSprite.image(weaponText);
+      this.hudLayer.append(weaponSprite);
+    }
+
     // Wind
     const windDirection = gameState.wind >= 0 ? 'Right' : 'Left';
     const windText = Stage.string(`Wind: ${Math.abs(gameState.wind).toFixed(1)} ${windDirection}`);
-    const windSprite = Stage.create().pin({ x: 10, y: 110 });
+    const windSprite = Stage.create().pin({ x: 10, y: 130 });
     windSprite.image(windText);
     this.hudLayer.append(windSprite);
 
@@ -70,6 +81,12 @@ export class GameHUD {
     const roundSprite = Stage.create().pin({ x: 600, y: 10 });
     roundSprite.image(roundText);
     this.hudLayer.append(roundSprite);
+
+    // Controls hint
+    const hint = Stage.string('Tab: Change Weapon | Arrows: Aim | Space: Fire | Q/E: Move');
+    const hintSprite = Stage.create().pin({ x: 200, y: 580 });
+    hintSprite.image(hint);
+    this.hudLayer.append(hintSprite);
 
     // Add to stage
     this.stage.append(this.hudLayer);

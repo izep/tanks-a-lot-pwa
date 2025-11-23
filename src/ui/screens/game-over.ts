@@ -7,6 +7,7 @@ import Stage from 'stage-js';
 export class GameOver {
   private stage: Stage;
   private onRestart: () => void;
+  private keyHandler: ((e: KeyboardEvent) => void) | null = null;
 
   constructor(stage: Stage, onRestart: () => void) {
     this.stage = stage;
@@ -61,20 +62,31 @@ export class GameOver {
     this.stage.append(restartSprite);
 
     // Handle restart
-    const handleKeyPress = (e: KeyboardEvent): void => {
+    this.keyHandler = (e: KeyboardEvent): void => {
       if (e.key === ' ' || e.key === 'Enter') {
-        window.removeEventListener('keydown', handleKeyPress);
+        this.cleanup();
         this.onRestart();
       }
     };
 
-    window.addEventListener('keydown', handleKeyPress);
+    window.addEventListener('keydown', this.keyHandler);
   }
 
   /**
    * Hide game over screen
    */
   hide(): void {
+    this.cleanup();
     this.stage.empty();
+  }
+
+  /**
+   * Cleanup event listeners
+   */
+  private cleanup(): void {
+    if (this.keyHandler) {
+      window.removeEventListener('keydown', this.keyHandler);
+      this.keyHandler = null;
+    }
   }
 }
