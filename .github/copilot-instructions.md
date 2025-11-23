@@ -45,6 +45,8 @@ npm run preview          # Preview production build
 ### Pre-commit Checklist
 
 Before committing, ensure:
+- ✅ References updated: `npm update --save`
+- ✅ References Audited: `npm audit fix`
 - ✅ TypeScript compiles: `npm run type-check`
 - ✅ Linting passes: `npm run lint`
 - ✅ Code is formatted: `npm run format`
@@ -64,7 +66,6 @@ Use [Conventional Commits](https://www.conventionalcommits.org/) format:
 ### Human Approval Required
 
 Do NOT make changes that:
-- Upgrade or change major dependencies (Stage.js, Vite, TypeScript major versions)
 - Add third-party libraries without security review
 - Modify CI/CD configuration (`.github/workflows/**`)
 - Add secrets, API keys, or credentials in code
@@ -74,6 +75,7 @@ Do NOT make changes that:
 ### Allowed Autonomous Edits
 
 You MAY make small, self-contained changes such as:
+- Upgrade dependencies as long as all breaking changes are accounted for
 - Fixing typos and improving documentation
 - Adding or updating tests for existing code
 - Bug fixes with appropriate tests
