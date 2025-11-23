@@ -1,0 +1,19 @@
+<svg width="96" height="96" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Explosion animation frame 3 - dissipating -->
+  
+  <!-- Outer smoke ring -->
+  <circle cx="48" cy="48" r="44" fill="#888" opacity="0.2"/>
+  
+  <!-- Fire remnants -->
+  <circle cx="48" cy="48" r="32" fill="#FF6B35" opacity="0.2"/>
+  <circle cx="48" cy="48" r="22" fill="#FFB627" opacity="0.3"/>
+  
+  <!-- Smoke clouds -->
+  <circle cx="60" cy="35" r="10" fill="#666" opacity="0.3"/>
+  <circle cx="35" cy="60" r="12" fill="#666" opacity="0.3"/>
+  <circle cx="55" cy="55" r="8" fill="#777" opacity="0.25"/>
+  <circle cx="40" cy="38" r="9" fill="#777" opacity="0.25"/>
+  
+  <!-- Fading center -->
+  <circle cx="48" cy="48" r="12" fill="#FFA500" opacity="0.4"/>
+</svg>

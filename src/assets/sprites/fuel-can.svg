@@ -1,0 +1,19 @@
+<svg width="24" height="32" viewBox="0 0 24 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fuel can icon -->
+  
+  <!-- Can body -->
+  <rect x="4" y="10" width="16" height="20" rx="2" fill="#CC0000"/>
+  
+  <!-- Can top -->
+  <rect x="6" y="6" width="12" height="5" rx="1" fill="#AA0000"/>
+  
+  <!-- Handle -->
+  <path d="M8 6 Q8 2 12 2 Q16 2 16 6" stroke="#AA0000" stroke-width="2" fill="none"/>
+  
+  <!-- Label stripe -->
+  <rect x="4" y="18" width="16" height="4" fill="#FFFFFF" opacity="0.3"/>
+  
+  <!-- Warning symbol -->
+  <circle cx="12" cy="20" r="3" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+  <rect x="11.5" y="16" width="1" height="4" fill="#FFFFFF"/>
+</svg>

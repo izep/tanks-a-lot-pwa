@@ -1,0 +1,12 @@
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fire particle for napalm effects -->
+  
+  <!-- Flame shape -->
+  <path d="M8 2 Q10 4 10 7 Q10 10 8 12 Q6 10 6 7 Q6 4 8 2 Z" fill="#FF6B35" opacity="0.8"/>
+  
+  <!-- Inner flame -->
+  <path d="M8 4 Q9 5 9 7 Q9 9 8 10 Q7 9 7 7 Q7 5 8 4 Z" fill="#FFB627" opacity="0.9"/>
+  
+  <!-- Hot core -->
+  <ellipse cx="8" cy="8" rx="2" ry="3" fill="#FFF" opacity="0.6"/>
+</svg>

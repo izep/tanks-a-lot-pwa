@@ -1,0 +1,30 @@
+<svg width="192" height="192" viewBox="0 0 192 192" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="192" height="192" fill="#2C5F2D"/>
+  
+  <!-- Ground -->
+  <path d="M0 140 Q48 130 96 135 Q144 140 192 130 L192 192 L0 192 Z" fill="#4A7C4E"/>
+  
+  <!-- Tank body -->
+  <ellipse cx="96" cy="130" rx="35" ry="20" fill="#1A1A1A"/>
+  <rect x="70" y="120" width="52" height="20" fill="#1A1A1A"/>
+  
+  <!-- Tank turret -->
+  <circle cx="96" cy="120" r="18" fill="#2A2A2A"/>
+  
+  <!-- Tank barrel -->
+  <rect x="96" y="105" width="6" height="30" fill="#3A3A3A" transform="rotate(-35 96 120)"/>
+  
+  <!-- Tank tracks -->
+  <ellipse cx="75" cy="140" rx="10" ry="6" fill="#4A4A4A"/>
+  <ellipse cx="96" cy="140" rx="10" ry="6" fill="#4A4A4A"/>
+  <ellipse cx="117" cy="140" rx="10" ry="6" fill="#4A4A4A"/>
+  
+  <!-- Highlight -->
+  <circle cx="102" cy="115" r="4" fill="#6A6A6A" opacity="0.6"/>
+  
+  <!-- Explosion effect in background -->
+  <circle cx="150" cy="80" r="15" fill="#FF6B35" opacity="0.4"/>
+  <circle cx="150" cy="80" r="10" fill="#FFB627" opacity="0.5"/>
+  <circle cx="150" cy="80" r="5" fill="#FFF" opacity="0.6"/>
+</svg>

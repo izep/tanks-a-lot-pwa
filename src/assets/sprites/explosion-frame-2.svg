@@ -1,0 +1,18 @@
+<svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Explosion animation frame 2 - expanding -->
+  
+  <!-- Outer ring -->
+  <circle cx="40" cy="40" r="36" fill="#FF6B35" opacity="0.3"/>
+  
+  <!-- Irregular burst shapes -->
+  <circle cx="40" cy="40" r="28" fill="#FFB627" opacity="0.5"/>
+  <ellipse cx="50" cy="35" rx="15" ry="12" fill="#FF8C42" opacity="0.4"/>
+  <ellipse cx="30" cy="45" rx="12" ry="15" fill="#FF8C42" opacity="0.4"/>
+  
+  <!-- Inner core -->
+  <circle cx="40" cy="40" r="16" fill="#FFF" opacity="0.7"/>
+  
+  <!-- Smoke particles -->
+  <circle cx="55" cy="30" r="6" fill="#888" opacity="0.3"/>
+  <circle cx="25" cy="55" r="5" fill="#888" opacity="0.3"/>
+</svg>

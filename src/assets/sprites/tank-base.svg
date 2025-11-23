@@ -1,0 +1,22 @@
+<svg width="64" height="48" viewBox="0 0 64 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Tank base - simple tank for gameplay -->
+  
+  <!-- Tracks/Wheels -->
+  <ellipse cx="16" cy="40" rx="6" ry="4" fill="#3A3A3A"/>
+  <ellipse cx="28" cy="40" rx="6" ry="4" fill="#3A3A3A"/>
+  <ellipse cx="40" cy="40" rx="6" ry="4" fill="#3A3A3A"/>
+  <ellipse cx="52" cy="40" rx="6" ry="4" fill="#3A3A3A"/>
+  
+  <!-- Track outline -->
+  <rect x="10" y="36" width="48" height="8" rx="4" fill="none" stroke="#2A2A2A" stroke-width="1.5"/>
+  
+  <!-- Body -->
+  <ellipse cx="32" cy="32" rx="22" ry="12" fill="#4A4A4A"/>
+  <rect x="14" y="24" width="36" height="16" fill="#4A4A4A"/>
+  
+  <!-- Turret base -->
+  <circle cx="32" cy="24" r="10" fill="#5A5A5A"/>
+  
+  <!-- Highlight -->
+  <circle cx="36" cy="22" r="3" fill="#7A7A7A" opacity="0.6"/>
+</svg>

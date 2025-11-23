@@ -1,0 +1,59 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background gradient -->
+  <defs>
+    <linearGradient id="skyGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a4d5e;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2C5F2D;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <rect width="512" height="512" fill="url(#skyGradient)"/>
+  
+  <!-- Stars -->
+  <circle cx="80" cy="60" r="2" fill="#FFF" opacity="0.8"/>
+  <circle cx="150" cy="40" r="2" fill="#FFF" opacity="0.6"/>
+  <circle cx="380" cy="70" r="2" fill="#FFF" opacity="0.7"/>
+  <circle cx="450" cy="50" r="2" fill="#FFF" opacity="0.8"/>
+  
+  <!-- Mountain silhouettes -->
+  <path d="M0 350 L80 280 L160 320 L240 260 L320 310 L400 270 L480 330 L512 310 L512 512 L0 512 Z" fill="#1A3A1A" opacity="0.5"/>
+  
+  <!-- Ground -->
+  <path d="M0 370 Q128 350 256 360 Q384 370 512 350 L512 512 L0 512 Z" fill="#4A7C4E"/>
+  <path d="M0 390 Q128 380 256 385 Q384 390 512 380 L512 512 L0 512 Z" fill="#3A6C3E"/>
+  
+  <!-- Tank body -->
+  <ellipse cx="256" cy="360" rx="90" ry="50" fill="#1A1A1A"/>
+  <rect x="180" y="330" width="152" height="50" fill="#1A1A1A" rx="5"/>
+  
+  <!-- Tank turret -->
+  <circle cx="256" cy="330" r="45" fill="#2A2A2A"/>
+  <circle cx="256" cy="330" r="40" fill="#3A3A3A"/>
+  
+  <!-- Tank barrel -->
+  <rect x="256" y="270" width="16" height="80" fill="#4A4A4A" rx="3" transform="rotate(-35 256 330)"/>
+  <rect x="256" y="275" width="14" height="75" fill="#5A5A5A" rx="2" transform="rotate(-35 256 330)"/>
+  
+  <!-- Tank tracks detail -->
+  <g opacity="0.8">
+    <ellipse cx="200" cy="380" rx="25" ry="15" fill="#4A4A4A"/>
+    <ellipse cx="240" cy="380" rx="25" ry="15" fill="#4A4A4A"/>
+    <ellipse cx="270" cy="380" rx="25" ry="15" fill="#4A4A4A"/>
+    <ellipse cx="310" cy="380" rx="25" ry="15" fill="#4A4A4A"/>
+  </g>
+  
+  <!-- Tank details -->
+  <circle cx="265" cy="325" r="8" fill="#6A6A6A" opacity="0.6"/>
+  <rect x="245" y="345" width="8" height="8" fill="#5A5A5A" rx="1"/>
+  <rect x="258" y="345" width="8" height="8" fill="#5A5A5A" rx="1"/>
+  
+  <!-- Explosion in background -->
+  <circle cx="400" cy="220" r="40" fill="#FF6B35" opacity="0.4"/>
+  <circle cx="400" cy="220" r="30" fill="#FFB627" opacity="0.5"/>
+  <circle cx="400" cy="220" r="20" fill="#FFF" opacity="0.6"/>
+  <circle cx="395" cy="215" r="10" fill="#FFF" opacity="0.8"/>
+  
+  <!-- Projectile trail -->
+  <line x1="330" y1="280" x2="380" y2="230" stroke="#FFD700" stroke-width="3" opacity="0.6" stroke-linecap="round"/>
+  <circle cx="385" cy="225" r="5" fill="#FFD700" opacity="0.8"/>
+</svg>

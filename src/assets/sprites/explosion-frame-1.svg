@@ -1,0 +1,15 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Explosion animation frame 1 - initial burst -->
+  
+  <!-- Outer ring -->
+  <circle cx="32" cy="32" r="28" fill="#FF6B35" opacity="0.4"/>
+  
+  <!-- Middle ring -->
+  <circle cx="32" cy="32" r="20" fill="#FFB627" opacity="0.6"/>
+  
+  <!-- Inner core -->
+  <circle cx="32" cy="32" r="12" fill="#FFF" opacity="0.8"/>
+  
+  <!-- Hot spot -->
+  <circle cx="30" cy="30" r="6" fill="#FFF"/>
+</svg>

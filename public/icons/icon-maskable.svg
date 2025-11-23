@@ -1,0 +1,32 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Safe zone for maskable icon - content centered -->
+  <!-- Background with padding for masks -->
+  <rect width="512" height="512" fill="#2C5F2D"/>
+  
+  <!-- Ground (higher up to fit in safe zone) -->
+  <path d="M0 320 Q128 310 256 315 Q384 320 512 310 L512 512 L0 512 Z" fill="#4A7C4E"/>
+  
+  <!-- Tank body -->
+  <ellipse cx="256" cy="320" rx="70" ry="40" fill="#1A1A1A"/>
+  <rect x="200" y="295" width="112" height="40" fill="#1A1A1A" rx="5"/>
+  
+  <!-- Tank turret -->
+  <circle cx="256" cy="295" r="35" fill="#2A2A2A"/>
+  <circle cx="256" cy="295" r="30" fill="#3A3A3A"/>
+  
+  <!-- Tank barrel -->
+  <rect x="256" y="250" width="12" height="60" fill="#4A4A4A" rx="2" transform="rotate(-35 256 295)"/>
+  
+  <!-- Tank tracks -->
+  <ellipse cx="220" cy="335" rx="20" ry="12" fill="#4A4A4A"/>
+  <ellipse cx="256" cy="335" rx="20" ry="12" fill="#4A4A4A"/>
+  <ellipse cx="292" cy="335" rx="20" ry="12" fill="#4A4A4A"/>
+  
+  <!-- Highlight -->
+  <circle cx="264" cy="290" r="6" fill="#6A6A6A" opacity="0.6"/>
+  
+  <!-- Simplified explosion -->
+  <circle cx="340" cy="220" r="30" fill="#FF6B35" opacity="0.5"/>
+  <circle cx="340" cy="220" r="20" fill="#FFB627" opacity="0.6"/>
+  <circle cx="340" cy="220" r="12" fill="#FFF" opacity="0.7"/>
+</svg>
