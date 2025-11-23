@@ -79,16 +79,16 @@ export enum WeaponType {
   Missile = 'missile',
   BabyNuke = 'baby-nuke',
   Nuke = 'nuke',
-  
+
   // Multi-warhead
   MIRV = 'mirv',
   DeathsHead = 'deaths-head',
-  
+
   // Rolling
   BabyRoller = 'baby-roller',
   Roller = 'roller',
   HeavyRoller = 'heavy-roller',
-  
+
   // Tunneling
   BabyDigger = 'baby-digger',
   Digger = 'digger',
@@ -96,7 +96,7 @@ export enum WeaponType {
   BabySandhog = 'baby-sandhog',
   Sandhog = 'sandhog',
   HeavySandhog = 'heavy-sandhog',
-  
+
   // Terrain modification
   RiotCharge = 'riot-charge',
   RiotBlast = 'riot-blast',
@@ -108,7 +108,7 @@ export enum WeaponType {
   LiquidDirt = 'liquid-dirt',
   DirtCharge = 'dirt-charge',
   EarthDisrupter = 'earth-disrupter',
-  
+
   // Special
   Napalm = 'napalm',
   HotNapalm = 'hot-napalm',
@@ -116,7 +116,7 @@ export enum WeaponType {
   FunkyBomb = 'funky-bomb',
   PlasmaBlast = 'plasma-blast',
   Laser = 'laser',
-  
+
   // Utility
   Tracer = 'tracer',
   SmokeTracer = 'smoke-tracer',

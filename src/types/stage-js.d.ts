@@ -49,15 +49,15 @@ declare module 'stage-js' {
     tick(callback: (elapsed: number) => void, once?: boolean): this;
     on(event: string, callback: (...args: unknown[]) => void): this;
     off(event: string, callback: (...args: unknown[]) => void): this;
-    
+
     attr(name: string, value?: unknown): unknown;
     label(text: string): this;
-    
+
     width(): number;
     width(value: number): this;
     height(): number;
     height(value: number): this;
-    
+
     visit(visitor: (node: StageNode) => void): void;
   }
 
@@ -69,9 +69,9 @@ declare module 'stage-js' {
     mount(element: HTMLElement, options?: StageOptions): Stage;
     create(): StageNode;
     string(text: string): string;
-    
+
     image(image: HTMLImageElement | HTMLCanvasElement): StageNode;
-    
+
     texture(src: string | HTMLImageElement | HTMLCanvasElement): unknown;
   }
 

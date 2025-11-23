@@ -21,17 +21,14 @@ export class Terrain {
   /**
    * Generate terrain height map using midpoint displacement
    */
-  private generateHeightMap(
-    width: number,
-    seed?: number,
-    roughness = 0.5
-  ): number[] {
+  private generateHeightMap(width: number, seed?: number, roughness = 0.5): number[] {
     const rng = seed !== undefined ? new SeededRandom(seed) : null;
-    const random = rng ? (min: number, max: number): number => rng.range(min, max) : 
-                         (min: number, max: number): number => Math.random() * (max - min) + min;
+    const random = rng
+      ? (min: number, max: number): number => rng.range(min, max)
+      : (min: number, max: number): number => Math.random() * (max - min) + min;
 
     const heights = new Array(width).fill(0);
-    
+
     // Set initial endpoints
     heights[0] = random(0.3, 0.7);
     heights[width - 1] = random(0.3, 0.7);
@@ -42,9 +39,9 @@ export class Terrain {
 
       const mid = Math.floor((start + end) / 2);
       const range = (heights[end] - heights[start]) * roughness;
-      
-      heights[mid] = (heights[start] + heights[end]) / 2 + random(-range, range);
-      heights[mid] = clamp(heights[mid], 0, 1);
+
+      const midValue = (heights[start] + heights[end]) / 2 + random(-range, range);
+      heights[mid] = clamp(midValue, 0, 1);
 
       displace(start, mid, roughness * 0.5);
       displace(mid, end, roughness * 0.5);
@@ -60,10 +57,10 @@ export class Terrain {
    */
   private createBitmap(): Uint8Array {
     const bitmap = new Uint8Array(this.width * this.height);
-    
+
     for (let x = 0; x < this.width; x++) {
       const terrainHeight = Math.floor(this.heightMap[x] * this.height);
-      
+
       // Fill column from bottom up to terrain height
       for (let y = this.height - 1; y >= this.height - terrainHeight; y--) {
         bitmap[y * this.width + x] = 1;
@@ -96,7 +93,7 @@ export class Terrain {
   isSolid(x: number, y: number): boolean {
     const ix = Math.floor(x);
     const iy = Math.floor(y);
-    
+
     if (ix < 0 || ix >= this.width || iy < 0 || iy >= this.height) {
       return false;
     }
@@ -161,12 +158,12 @@ export class Terrain {
     for (let y = this.height - 2; y >= 0; y--) {
       for (let x = 0; x < this.width; x++) {
         const index = y * this.width + x;
-        
+
         if (this.bitmap[index] === 1) {
           // Check if pixel below is empty
           let fallDistance = 0;
           let checkY = y + 1;
-          
+
           while (checkY < this.height && this.bitmap[checkY * this.width + x] === 0) {
             fallDistance++;
             checkY++;

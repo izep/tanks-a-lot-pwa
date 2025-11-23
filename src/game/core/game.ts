@@ -136,7 +136,7 @@ export class Game {
   private startNewGame(): void {
     this.initializeGame();
     this.currentPhase = GamePhase.Playing;
-    
+
     if (this.stage) {
       this.gameHUD = new GameHUD(this.stage);
     }
@@ -212,7 +212,8 @@ export class Game {
    * Adjust firing angle
    */
   private adjustAngle(delta: number): void {
-    if (!this.gameState || this.currentPhase !== GamePhase.Playing || this.projectilesActive) return;
+    if (!this.gameState || this.currentPhase !== GamePhase.Playing || this.projectilesActive)
+      return;
 
     const currentPlayer = this.gameState.getCurrentPlayer();
     const tank = this.gameState.getTank(currentPlayer.config.id);
@@ -226,7 +227,8 @@ export class Game {
    * Adjust firing power
    */
   private adjustPower(delta: number): void {
-    if (!this.gameState || this.currentPhase !== GamePhase.Playing || this.projectilesActive) return;
+    if (!this.gameState || this.currentPhase !== GamePhase.Playing || this.projectilesActive)
+      return;
 
     const currentPlayer = this.gameState.getCurrentPlayer();
     const tank = this.gameState.getTank(currentPlayer.config.id);
@@ -240,7 +242,8 @@ export class Game {
    * Handle firing
    */
   private handleFire(): void {
-    if (!this.gameState || this.currentPhase !== GamePhase.Playing || this.projectilesActive) return;
+    if (!this.gameState || this.currentPhase !== GamePhase.Playing || this.projectilesActive)
+      return;
 
     const state = this.gameState.getState();
     if (state.projectiles.length > 0) return; // Already firing
@@ -265,7 +268,8 @@ export class Game {
    * Handle tank movement
    */
   private handleMove(direction: -1 | 1): void {
-    if (!this.gameState || this.currentPhase !== GamePhase.Playing || this.projectilesActive) return;
+    if (!this.gameState || this.currentPhase !== GamePhase.Playing || this.projectilesActive)
+      return;
 
     const currentPlayer = this.gameState.getCurrentPlayer();
     const tank = this.gameState.getTank(currentPlayer.config.id);
@@ -285,7 +289,7 @@ export class Game {
 
       if (elapsed >= this.deltaTime) {
         this.lastTime = currentTime - (elapsed % this.deltaTime);
-        
+
         if (this.currentPhase === GamePhase.Playing) {
           this.update(this.deltaTime / 1000); // Convert to seconds
           this.render();
@@ -582,7 +586,7 @@ export class Game {
     canvas.width = width;
     canvas.height = height;
     const ctx = canvas.getContext('2d');
-    
+
     if (!ctx) return;
 
     // Draw terrain pixels to canvas
@@ -595,9 +599,9 @@ export class Game {
         if (bitmap[index] === 1) {
           const pixelIndex = (y * width + x) * 4;
           // Brown terrain color
-          data[pixelIndex] = 139;     // R
-          data[pixelIndex + 1] = 69;  // G
-          data[pixelIndex + 2] = 19;  // B
+          data[pixelIndex] = 139; // R
+          data[pixelIndex + 1] = 69; // G
+          data[pixelIndex + 2] = 19; // B
           data[pixelIndex + 3] = 255; // A
         }
       }
@@ -610,7 +614,7 @@ export class Game {
       x: 0,
       y: 0,
     });
-    
+
     terrainSprite.image(canvas);
     this.stage.append(terrainSprite);
   }
@@ -698,7 +702,7 @@ export class Game {
     });
 
     sprite.image('#FFFF00'); // Yellow
-    
+
     this.stage.append(sprite);
   }
 
@@ -710,7 +714,7 @@ export class Game {
 
     const currentPlayer = this.gameState.getCurrentPlayer();
     const tank = this.gameState.getTank(currentPlayer.config.id);
-    
+
     if (!tank) return;
 
     const tankState = tank.getState();
@@ -738,7 +742,7 @@ export class Game {
       cancelAnimationFrame(this.animationFrameId);
       this.animationFrameId = null;
     }
-    
+
     if (this.inputManager) {
       this.inputManager.destroy();
     }

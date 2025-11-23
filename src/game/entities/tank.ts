@@ -8,12 +8,7 @@ import { Terrain } from './terrain';
 export class Tank {
   private state: TankState;
 
-  constructor(
-    id: string,
-    playerId: string,
-    position: Vector2D,
-    maxHealth = 100
-  ) {
+  constructor(id: string, playerId: string, position: Vector2D, maxHealth = 100) {
     this.state = {
       id,
       playerId,
@@ -99,7 +94,7 @@ export class Tank {
       return false;
     }
 
-    const targetX = this.state.position.x + (direction * distance);
+    const targetX = this.state.position.x + direction * distance;
     const { width } = terrain.getDimensions();
 
     // Check bounds
@@ -113,7 +108,7 @@ export class Tank {
     // Check slope (can't climb too steep)
     const currentY = this.state.position.y;
     const slopeAngle = Math.abs(Math.atan2(targetY - currentY, distance) * (180 / Math.PI));
-    
+
     if (slopeAngle > 45) {
       return false; // Too steep
     }
@@ -133,11 +128,11 @@ export class Tank {
   updatePosition(terrain: Terrain): boolean {
     const groundY = terrain.getHeightAt(this.state.position.x);
     const startY = this.state.position.y;
-    
+
     // Check if tank needs to fall
     if (groundY > startY) {
       this.state.position.y = groundY;
-      
+
       // Calculate fall damage
       const fallDistance = groundY - startY;
       if (fallDistance > 20) {
