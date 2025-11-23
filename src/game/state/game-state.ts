@@ -149,7 +149,7 @@ export class GameStateManager {
   nextTurn(): void {
     // Move to next alive player
     const startIndex = this.state.currentPlayerIndex;
-    
+
     do {
       this.state.currentPlayerIndex =
         (this.state.currentPlayerIndex + 1) % this.state.players.length;
@@ -177,9 +177,7 @@ export class GameStateManager {
 
     // Apply interest to money
     this.state.players.forEach((player) => {
-      const interest = Math.floor(
-        player.money * this.state.config.economics.interestRate
-      );
+      const interest = Math.floor(player.money * this.state.config.economics.interestRate);
       player.money += interest;
     });
 

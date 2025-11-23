@@ -22,15 +22,12 @@ export function updateProjectile(
 
   // Apply gravity to velocity
   const gravityForce: Vector2D = { x: 0, y: gravity * deltaTime };
-  
+
   // Apply wind to velocity
   const windForce: Vector2D = { x: wind * deltaTime, y: 0 };
 
   // Update velocity
-  const newVelocity = addVectors(
-    addVectors(projectile.velocity, gravityForce),
-    windForce
-  );
+  const newVelocity = addVectors(addVectors(projectile.velocity, gravityForce), windForce);
 
   // Update position
   const displacement = multiplyVector(newVelocity, deltaTime);
@@ -89,7 +86,7 @@ export function predictTrajectory(
   steps = 100
 ): Vector2D[] {
   const trajectory: Vector2D[] = [];
-  
+
   let projectile = createProjectile(
     'preview',
     WeaponType.Tracer,
@@ -102,7 +99,7 @@ export function predictTrajectory(
   for (let i = 0; i < steps; i++) {
     trajectory.push({ ...projectile.position });
     projectile = updateProjectile(projectile, config);
-    
+
     // Stop if projectile goes way off screen
     if (projectile.position.y > 2000 || Math.abs(projectile.position.x) > 2000) {
       break;

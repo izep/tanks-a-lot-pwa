@@ -103,12 +103,12 @@ export function calculateDamage(
   blastRadius: number
 ): number {
   const dist = distance(targetPosition, explosionCenter);
-  
+
   if (dist >= blastRadius) {
     return 0;
   }
 
   // Linear falloff
-  const falloff = 1 - (dist / blastRadius);
+  const falloff = 1 - dist / blastRadius;
   return Math.floor(maxDamage * falloff);
 }

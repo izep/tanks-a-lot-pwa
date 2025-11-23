@@ -3,11 +3,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import {
-  updateProjectile,
-  createProjectile,
-  predictTrajectory,
-} from '@/game/physics/ballistics';
+import { updateProjectile, createProjectile, predictTrajectory } from '@/game/physics/ballistics';
 import { WeaponType } from '@/types/game';
 
 describe('Ballistics', () => {

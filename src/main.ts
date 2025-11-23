@@ -9,7 +9,7 @@ import { Game } from './game/core/game';
  */
 function init(): void {
   const appElement = document.getElementById('app');
-  
+
   if (!appElement) {
     throw new Error('App element not found');
   }

@@ -5,7 +5,7 @@
 // Mock canvas if needed
 if (typeof HTMLCanvasElement !== 'undefined') {
   const originalGetContext = HTMLCanvasElement.prototype.getContext;
-  
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   HTMLCanvasElement.prototype.getContext = function (contextId: string): any {
     if (contextId === '2d') {
